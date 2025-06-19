@@ -60,8 +60,7 @@ const VQASystem: React.FC = () => {
       formData.append('image', selectedImage);
       formData.append('question', question);
 
-      // Replace this URL with your actual backend endpoint
-      const response = await fetch('/api/vqa', {
+      const response = await fetch('http://127.0.0.1:5000/predict', {
         method: 'POST',
         body: formData,
       });
@@ -95,37 +94,12 @@ const VQASystem: React.FC = () => {
     } catch (err) {
       console.error('VQA request failed:', err);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      
-      // For demo purposes, provide a mock response when backend is not available
-      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('404')) {
-        const mockAnswer = `Based on your question "${question}", I can see this is a demonstration of the VQA system. In a real implementation, this would connect to a backend AI service that analyzes images and provides detailed answers. The system is ready to connect to your VQA backend API.`;
-        
-        setAnswer(mockAnswer);
-        
-        const imageUrl = URL.createObjectURL(selectedImage);
-        const newHistoryItem: QAItem = {
-          id: Date.now().toString(),
-          image: imageUrl,
-          question,
-          answer: mockAnswer,
-          timestamp: new Date(),
-        };
-        
-        setHistory(prev => [newHistoryItem, ...prev]);
-        
-        toast({
-          title: "Demo Mode",
-          description: "Backend not connected. Showing demo response.",
-          variant: "default",
-        });
-      } else {
-        setError(`Failed to analyze image: ${errorMessage}`);
-        toast({
-          title: "Analysis Failed",
-          description: errorMessage,
-          variant: "destructive",
-        });
-      }
+      setError(`Failed to analyze image: ${errorMessage}`);
+      toast({
+        title: "Analysis Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -210,7 +184,7 @@ const VQASystem: React.FC = () => {
         {/* Footer */}
         <div className="text-center mt-12 text-gray-500 text-sm">
           <p>
-            Ready to connect to your VQA backend API at <code className="bg-gray-100 px-2 py-1 rounded">/api/vqa</code>
+            Connected to VQA backend at <code className="bg-gray-100 px-2 py-1 rounded">http://127.0.0.1:5000/predict</code>
           </p>
         </div>
       </div>
